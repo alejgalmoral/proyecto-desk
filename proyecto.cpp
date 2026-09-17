@@ -171,7 +171,14 @@ void TNT(instrumento *&equipo) {
 	}
 }
 
+void cierre_sesion (){
+	fstream arch_ses("sesiones.bin", ios::binary || ios::app || ios::in || ios::out) //Apertura para escribir en archivo binario Sesiones
 
+	int codigo_ses;
+	cout<<"Ingrese el codigo de la sesion a cerrar, por favor"<<endl; //Solicitud de código para buscar coincidencia de la variable Codigo en el archivo y así ubicar el apuntador en la información de la sesión en el archivo binario
+	cin>>codigo_ses;
+	
+	
 
 int main() {
 	int D4C;
