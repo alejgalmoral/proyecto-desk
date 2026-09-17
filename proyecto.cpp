@@ -56,7 +56,7 @@ void TNT(instrumento *&equipo) {
 		cout<<"ingrese la cantidad de equipos que va a ingresar"<<endl;
 		cin>>dan;
 		while(true) {
-			if(dan=<0) {
+			if(dan<=0) {
 				cout<<"ingrese un numero valido"<<endl;
 				cin>>dan;
 			}
@@ -67,13 +67,30 @@ void TNT(instrumento *&equipo) {
 		equipo = new instrumento[dan];
 		instrumento* equipos = equipo;
         for(int y=0;y<dan;y++){
-        cout
+        cout<<"ingresa codigo del equipo "<<y+1<<endl;
+        cin>>cod_aux;
 		equipos->codigo=cod_aux;
+		cout<<"ingresa nombre del equipo "<<y+1<<endl;
+		cin.ignore();
+		cin.getline(nom_aux,300);
 		asignarCadena(equipos->nombre,nom_aux);
+		cout<<"ingresa laboratorio del equipo "<<y+1<<endl;
+		cin.ignore();
+		cin.getline(lab_aux,300);
 		asignarCadena(equipos->laboratorio,lab_aux);
+		cout<<"ingresa tipo de equipo "<<y+1<<endl;
+		cin.ignore();
+		cin.getline(tipo_aux,300);
 		asignarCadena(equipos->tipo,tipo_aux);
+		cout<<"ingresa costo del equipo "<<y+1<<endl;
+        cin>>costo_aux;
 		equipos->costo=costo_aux;
+		cout<<"ingresa semestre minimo para el equipo "<<y+1<<endl;
+        cin>>sme_aux;
 		equipos->semestre=sme_aux;
+		cout<<"ingresa descripcion del equipo "<<y+1<<endl;
+		cin.ignore();
+		cin.getline(des_aux,300);
 		asignarCadena(equipos->desck,des_aux);
 		equipos++;
         }
