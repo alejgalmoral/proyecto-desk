@@ -81,7 +81,7 @@ void TNT(instrumento *&equipo) {
 		cout<<"ingresa tipo de equipo "<<y+1<<endl;
 		cin.getline(tipo_aux,300);
 		asignarCadena(equipos->tipo,tipo_aux);
-		cout<<"ingrese estado del equipo "<<y+1<<endl
+		cout<<"ingrese estado del equipo "<<y+1<<endl;
 		cin.getline(esta_aux,300);
 		asignarCadena(equipos->estado,esta_aux);
 		cout<<"ingresa costo del equipo "<<y+1<<endl;
@@ -151,7 +151,7 @@ void TNT(instrumento *&equipo) {
 					token = strtok(NULL, "*");
 					opcion++;
 				}
-				if(opcion!=7||sme_aux==0||costo_aux==0||cod_aux==0) {
+				if(opcion<8||sme_aux==0||costo_aux==0||cod_aux==0) {
 					cout<<"error: linea del archivo corrupta"<<endl;
 				}
 				else {
@@ -159,6 +159,7 @@ void TNT(instrumento *&equipo) {
 					asignarCadena(equipos->nombre,nom_aux);
 					asignarCadena(equipos->laboratorio,lab_aux);
 					asignarCadena(equipos->tipo,tipo_aux);
+					asignarCadena(equipos->estado, esta_aux);
 					equipos->costo=costo_aux;
 					equipos->semestre=sme_aux;
 					asignarCadena(equipos->desck,des_aux);
@@ -168,17 +169,112 @@ void TNT(instrumento *&equipo) {
 			}
 
 		}
+	togore.close();}
+}
+void TVT(usuario *&estudiantes) {
+	int cod_aux;
+	char nom_aux[300];
+	char pog_aux[300];
+	int sme_aux;
+	int dan=0;
+	int des;
+	cout<<"-----------------"<<endl;
+	cout<<"|ingresar equipo|"<<endl;
+	cout<<"|manual======[1]|"<<endl;
+	cout<<"|archivo=====[2]|"<<endl;
+	cout<<"-----------------"<<endl;
+	cin>>des;
+	if(des==1) {
+		cout<<"ingrese la cantidad de equipos que va a ingresar"<<endl;
+		cin>>dan;
+		while(true) {
+			if(dan<=0) {
+				cout<<"ingrese un numero valido"<<endl;
+				cin>>dan;
+			}
+			else {
+				break;
+			}
+		}
+		estudiantes = new usuario[dan];
+		usuario* usuarios = estudiantes;
+		for(int y=0; y<dan; y++) {
+			cout<<"ingresa codigo del estudiante "<<y+1<<endl;
+			cin>>cod_aux;
+			usuarios->codigo=cod_aux;
+			cout<<"ingresa nombre del estudiante "<<y+1<<endl;
+			cin.ignore();
+			cin.getline(nom_aux,300);
+			asignarCadena(usuarios->nomes,nom_aux);
+			cout<<"ingresa programa del equipo "<<y+1<<endl;
+			cin.getline(pog_aux,300);
+			asignarCadena(usuarios->programa,pog_aux);
+			cout<<"ingresa semestre del estudiante "<<y+1<<endl;
+			cin>>sme_aux;
+			usuarios->semes=sme_aux;
+			usuarios++;
+		}
+	}
+	else if(des==2) {
+		char kirk[30];
+		char linea[300];
+		cout<<"escribe el nombre de el archivo"<<endl;
+		cin.ignore();
+		cin.getline(kirk,30);
+		ifstream togore(kirk);
+		if(!togore) {
+			cout<<"error:archivo no existe "<<endl;
+			return ;
+		}
+		else {
+			while(togore.getline(linea,300)) {
+				dan++;
+			}
+			estudiantes = new usuario[dan];
+			usuario* usuarios = estudiantes;
+			togore.clear();              // Restaura el estado del stream (quita la bandera EOF)
+			togore.seekg(0, ios::beg);
+			//Declaración de variables auxiliares para tokenización
+			int opcion=0;
+			while(togore.getline(linea,300)) {
+				char* token = strtok(linea, "*");
+				opcion=0;
+				while (token != NULL) {
+					switch (opcion) {
+					case 0:
+						cod_aux=atoi(token);
+						break;
+					case 1:
+						strcpy(nom_aux,token);
+						break;
+					case 2:
+						strcpy(pog_aux,token);
+						break;
+					case 3:
+						sme_aux=atoi(token);
+						break;
+					}
+					token = strtok(NULL, "*");
+					opcion++;
+				}
+				if(opcion<4||sme_aux==0||cod_aux==0) {
+					cout<<"error: linea del archivo corrupta"<<endl;
+				}
+				else {
+					usuarios->codigo=cod_aux;
+					asignarCadena(usuarios->nomes,nom_aux);
+					asignarCadena(usuarios->programa,pog_aux);
+					usuarios->semes=sme_aux;
+					usuarios++;
+				}
+
+			}
+
+		}
+		togore.close();
 	}
 }
 
-void cierre_sesion (){
-	fstream arch_ses("sesiones.bin", ios::binary || ios::app || ios::in || ios::out) //Apertura para escribir en archivo binario Sesiones
-
-	int codigo_ses;
-	cout<<"Ingrese el codigo de la sesion a cerrar, por favor"<<endl; //Solicitud de código para buscar coincidencia de la variable Codigo en el archivo y así ubicar el apuntador en la información de la sesión en el archivo binario
-	cin>>codigo_ses;
-	
-	
 
 int main() {
 	int D4C;
@@ -192,7 +288,7 @@ int main() {
 		cout<<"|1: cargar equipos   |   2:cargar usuarios  |"<<endl;
 		cout<<"|3: consultar estado |   4:programar sesion |"<<endl;
 		cout<<"|5: cerrar sesion    |   6:generar informe  |"<<endl;
-		cout<<"|7: rankin critico   |   8 laragate         |"<<endl;
+		cout<<"|7: rankin critico   |   8:salir            |"<<endl;
 		cout<<"_____________________________________________"<<endl;
 		cin>>D4C;
 		while(true) {
@@ -205,9 +301,9 @@ int main() {
 			}
 		}
 		TNT(equipos);
+        TVT(estudiantes);
 
 
-
-	} while(D4C=!8);
+	} while(D4C!=8);
 
 }
