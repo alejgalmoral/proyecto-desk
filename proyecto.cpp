@@ -8,6 +8,7 @@ struct instrumento {
 	char *nombre = NULL;
 	char *laboratorio = NULL;
 	char *tipo = NULL;
+	char *estado = NULL;
 	int costo;
 	int semestre;
 	char *desck = NULL;
@@ -75,13 +76,14 @@ void TNT(instrumento *&equipo) {
 		cin.getline(nom_aux,300);
 		asignarCadena(equipos->nombre,nom_aux);
 		cout<<"ingresa laboratorio del equipo "<<y+1<<endl;
-		cin.ignore();
 		cin.getline(lab_aux,300);
 		asignarCadena(equipos->laboratorio,lab_aux);
 		cout<<"ingresa tipo de equipo "<<y+1<<endl;
-		cin.ignore();
 		cin.getline(tipo_aux,300);
 		asignarCadena(equipos->tipo,tipo_aux);
+		cout<<"ingrese estado del equipo "<<y+1<<endl
+		cin.getline(esta_aux,300);
+		asignarCadena(equipos->estado,esta_aux);
 		cout<<"ingresa costo del equipo "<<y+1<<endl;
         cin>>costo_aux;
 		equipos->costo=costo_aux;
@@ -98,12 +100,13 @@ void TNT(instrumento *&equipo) {
 	else if(des==2) {
 		char kirk[30];
 		char linea[300];
-		cout<<"mira bien hijo de tu puta madre, dame el nombre de el archivo"<<endl;
+		cout<<"escribe el nombre de el archivo"<<endl;
 		cin.ignore();
 		cin.getline(kirk,30);
 		ifstream togore(kirk);
 		if(!togore) {
-			cout<<"puto idiota tu archivo no existe (como tu relacion)"<<endl;
+			cout<<"error:archivo no existe "<<endl;
+			return ;
 		}
 		else {
 			while(togore.getline(linea,300)) {
@@ -149,7 +152,7 @@ void TNT(instrumento *&equipo) {
 					opcion++;
 				}
 				if(opcion!=7||sme_aux==0||costo_aux==0||cod_aux==0) {
-					cout<<"error en linea del archivo!!"<<endl;
+					cout<<"error: linea del archivo corrupta"<<endl;
 				}
 				else {
 					equipos->codigo=cod_aux;
@@ -182,12 +185,12 @@ int main() {
 		cout<<"|1: cargar equipos   |   2:cargar usuarios  |"<<endl;
 		cout<<"|3: consultar estado |   4:programar sesion |"<<endl;
 		cout<<"|5: cerrar sesion    |   6:generar informe  |"<<endl;
-		cout<<"|7: rankin critico   |   8 laragate hdp     |"<<endl;
+		cout<<"|7: rankin critico   |   8 laragate         |"<<endl;
 		cout<<"_____________________________________________"<<endl;
 		cin>>D4C;
 		while(true) {
 			if((D4C>8)||(D4C<1)) {
-				cout<<"escribe bien imbecil"<<endl;
+				cout<<"ingresa un dato valido"<<endl;
 				cin>>D4C;
 			}
 			else {
