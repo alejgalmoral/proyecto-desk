@@ -369,14 +369,14 @@ void TXT (sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int &des,
 void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des,int eqe,int usu) {
     char Operativo[17]    = " operativa ";
     char Mantenimiento[17] = " mantenimiento ";
-    char FueraServicio[22] = " fuera_de_servicio ";
+    char FueraServicio[22] = " fuera de servicio ";
 	int hora;
 	int moon;
 	int spamnton;
 	usuario *wake=estudiantes;
 	instrumento *golden=equipo;
 	sesion *full=sesiones;
-	if(sesiones = nullptr) {
+	if(sesiones == nullptr) {
 		cout<<"no existen sesiones registradas"<<endl;
 	}
 	cout<<"ingresa numero de la sesion a cerrar: "<<endl;
@@ -464,7 +464,7 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des,in
         cout << "Error al abrir datos.bin para actualizacion." << endl;
         return;
     }
-    streampos desplazamiento = moon * sizeof(sesion);
+    streampos desplazamiento = (full - sesiones) * sizeof(sesion);
     deltarune.seekp(desplazamiento);
     deltarune.write(reinterpret_cast<const char*>(full), sizeof(sesion));
     deltarune.close();
