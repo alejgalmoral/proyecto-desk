@@ -8,7 +8,7 @@ struct instrumento {
 	char *nombre = NULL;
 	char *laboratorio = NULL;
 	char *tipo = NULL;
-	char *estado = NULL;
+	char estado[22];
 	int costo;
 	int semestre;
 	char *desck = NULL;
@@ -95,7 +95,7 @@ int TNT(instrumento *&equipo) {
 			asignarCadena(equipos->tipo,tipo_aux);
 			cout<<"ingrese estado del equipo "<<y+1<<endl;
 			cin.getline(esta_aux,300);
-			asignarCadena(equipos->estado,esta_aux);
+			strcpy(equipos->estado,esta_aux);
 			cout<<"ingresa costo del equipo "<<y+1<<endl;
 			cin>>costo_aux;
 			equipos->costo=costo_aux;
@@ -172,7 +172,7 @@ int TNT(instrumento *&equipo) {
 					asignarCadena(equipos->nombre,nom_aux);
 					asignarCadena(equipos->laboratorio,lab_aux);
 					asignarCadena(equipos->tipo,tipo_aux);
-					asignarCadena(equipos->estado, esta_aux);
+					strcpy(equipos->estado, esta_aux);
 					equipos->costo=costo_aux;
 					equipos->semestre=sme_aux;
 					asignarCadena(equipos->desck,des_aux);
@@ -295,6 +295,7 @@ int TVT(usuario *&estudiantes) {
 }
 void TXT (sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int &des,int eqe,int usu) {
 	int yes;
+	char Prestado[17] = " prestado ";
 	sesion paso;
 	if (estudiantes == nullptr || equipo == nullptr) {
 		cout << "error: Cargue primero los archivos de usuarios y equipos." << endl;
@@ -360,14 +361,18 @@ void TXT (sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int &des,
 	paso.abierto=true;
 	agregarSesion(sesiones,des,paso);
 	chester.write(reinterpret_cast<const char*>(&paso), sizeof(sesion));
-
+    strcpy(print->estado,Prestado);
 	chester.close();
 	cout << "Sesion registrada exitosamente en datos.bin" << endl;
 
 }
-void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
+void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des,int eqe,int usu) {
+    char Operativo[17]    = " operativa ";
+    char Mantenimiento[17] = " mantenimiento ";
+    char FueraServicio[22] = " fuera_de_servicio ";
 	int hora;
 	int moon;
+	int spamnton;
 	usuario *wake=estudiantes;
 	instrumento *golden=equipo;
 	sesion *full=sesiones;
@@ -385,6 +390,7 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
 			cout<<"la sesion no existe"<<endl;
 			return;
 		}
+		full++;
 	}
 	if (full->abierto==false) {
 		cout<<"la sesion ya fue cerrada"<<endl;
@@ -397,13 +403,12 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
 		else if(g==eqe-1) {
 			return;
 		}
-		full++;
 		golden++;
 	}
 	cout<<"ingrese el timepo final de la sesion"<<endl;
 	cin>>hora;
 	if(full->duracion_r<hora) {
-		cout>>"se le sera aplicada una sancion por ecceso de tiempo"<<endl;
+		cout<<"se le sera aplicada una sancion por ecceso de tiempo"<<endl;
 		for(int g=0; g<usu; g++) {
 			if(full->codigo_u==wake->codigo) {
 				break;
@@ -411,7 +416,6 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
 			else if(g==usu-1) {
 				return;
 			}
-			full++;
 			wake++;
 		}
 		int spike = hora-full->duracion_r;
@@ -420,7 +424,52 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
 		wake->pena_a=pena;
 		
 	}
+	wake->cont_s+=1;
+	cout<<"el equipo sufrio alguna daño?"<<endl;
+	cout<<"--------------------------"<<endl;
+	cout<<"|ninguno==============[1]|"<<endl;
+	cout<<"|mantenimiento========[2]|"<<endl;
+	cout<<"|salida de servivio===[3]|"<<endl;
+	cout<<"--------------------------"<<endl;
+	cin>>spamnton;
+	while(true) {
+			if((spamnton>3)||(spamnton<1)) {
+				cout<<"ingresa un dato valido"<<endl;
+				cin>>spamnton;
+			}
+			else {
+				break;
+			}
+		}
+	switch (spamnton){
+	    case 1:
+	    cout<<"equipo operativo"<<endl;
+	    strcpy(golden->estado,Operativo);
+	    break;
+	    case 2:
+	    cout<<"equipo para mantenimiento"<<endl;
+	    strcpy(golden->estado,Mantenimiento);
+	    break;
+	    case 3:
+	    cout<<"equipo queda fuera de servicio"<<endl;
+	    strcpy(golden->estado,FueraServicio);
+	    break;
+	}
+	cout<<"escriba sus observaciones de la sesion"<<endl;
+	cin.ignore();
+	cin.getline(full->observacion,300);
+	fstream deltarune("datos.bin", ios::binary | ios::in | ios::out);
+    if (!deltarune.is_open()) {
+        cout << "Error al abrir datos.bin para actualizacion." << endl;
+        return;
+    }
+    streampos desplazamiento = des * sizeof(sesion);
+    deltarune.seekp(desplazamiento);
+    deltarune.write(reinterpret_cast<const char*>(full), sizeof(sesion));
+    deltarune.close();
+    cout << "Sesion #" << des << " actualizada exitosamente en el archivo binario." << endl;
 }
+
 
 
 int main() {
@@ -461,7 +510,7 @@ int main() {
 			TXT(sesiones,estudiantes,equipos,marca,eqe,usu);
 			break;
 		case 5:
-			TFT(sesiones,marca);
+			TFT(sesiones,estudiantes,equipos,marca,eqe,usu);
 			break;
 		}
 
