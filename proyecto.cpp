@@ -424,6 +424,7 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des,in
 		wake->pena_a=pena;
 		
 	}
+	full->abierto = false;
 	wake->cont_s+=1;
 	cout<<"el equipo sufrio alguna daño?"<<endl;
 	cout<<"--------------------------"<<endl;
@@ -463,11 +464,11 @@ void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des,in
         cout << "Error al abrir datos.bin para actualizacion." << endl;
         return;
     }
-    streampos desplazamiento = des * sizeof(sesion);
+    streampos desplazamiento = moon * sizeof(sesion);
     deltarune.seekp(desplazamiento);
     deltarune.write(reinterpret_cast<const char*>(full), sizeof(sesion));
     deltarune.close();
-    cout << "Sesion #" << des << " actualizada exitosamente en el archivo binario." << endl;
+    cout << "Sesion #" << moon << " actualizada exitosamente en el archivo binario." << endl;
 }
 
 
