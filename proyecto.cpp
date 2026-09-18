@@ -26,17 +26,29 @@ struct sesion {
 	int codigo;
 	int codigo_u;
 	int codigo_e;
-	int fecha;
-	int duracion;
-	char *observacion=NULL;
-	bool penalisa;
+	char fecha[11];
+	int duracion_r;
+	char observacion[300];
+	bool abierto;
 };
 void asignarCadena(char*& destino, const char* origen) {
 	if (origen == NULL) return;
 	destino = new char[strlen(origen) + 1];
 	strcpy(destino, origen);
 }
-void TNT(instrumento *&equipo) {
+void agregarSesion(sesion *&sesiones, int &cant, sesion nueva) {
+	sesion *nuevo = new sesion[cant + 1];
+	sesion *orig = sesiones;
+	sesion *dest = nuevo;
+	for (int i = 0; i < cant; i++) {
+		*dest++ = *orig++;
+	}
+	*dest = nueva;
+	delete[] sesiones;
+	sesiones = nuevo;
+	cant++;
+}
+int TNT(instrumento *&equipo) {
 	int cod_aux;
 	char nom_aux[300];
 	char lab_aux[300];
@@ -67,35 +79,36 @@ void TNT(instrumento *&equipo) {
 		}
 		equipo = new instrumento[dan];
 		instrumento* equipos = equipo;
-        for(int y=0;y<dan;y++){
-        cout<<"ingresa codigo del equipo "<<y+1<<endl;
-        cin>>cod_aux;
-		equipos->codigo=cod_aux;
-		cout<<"ingresa nombre del equipo "<<y+1<<endl;
-		cin.ignore();
-		cin.getline(nom_aux,300);
-		asignarCadena(equipos->nombre,nom_aux);
-		cout<<"ingresa laboratorio del equipo "<<y+1<<endl;
-		cin.getline(lab_aux,300);
-		asignarCadena(equipos->laboratorio,lab_aux);
-		cout<<"ingresa tipo de equipo "<<y+1<<endl;
-		cin.getline(tipo_aux,300);
-		asignarCadena(equipos->tipo,tipo_aux);
-		cout<<"ingrese estado del equipo "<<y+1<<endl;
-		cin.getline(esta_aux,300);
-		asignarCadena(equipos->estado,esta_aux);
-		cout<<"ingresa costo del equipo "<<y+1<<endl;
-        cin>>costo_aux;
-		equipos->costo=costo_aux;
-		cout<<"ingresa semestre minimo para el equipo "<<y+1<<endl;
-        cin>>sme_aux;
-		equipos->semestre=sme_aux;
-		cout<<"ingresa descripcion del equipo "<<y+1<<endl;
-		cin.ignore();
-		cin.getline(des_aux,300);
-		asignarCadena(equipos->desck,des_aux);
-		equipos++;
-        }
+		for(int y=0; y<dan; y++) {
+			cout<<"ingresa codigo del equipo "<<y+1<<endl;
+			cin>>cod_aux;
+			equipos->codigo=cod_aux;
+			cout<<"ingresa nombre del equipo "<<y+1<<endl;
+			cin.ignore();
+			cin.getline(nom_aux,300);
+			asignarCadena(equipos->nombre,nom_aux);
+			cout<<"ingresa laboratorio del equipo "<<y+1<<endl;
+			cin.getline(lab_aux,300);
+			asignarCadena(equipos->laboratorio,lab_aux);
+			cout<<"ingresa tipo de equipo "<<y+1<<endl;
+			cin.getline(tipo_aux,300);
+			asignarCadena(equipos->tipo,tipo_aux);
+			cout<<"ingrese estado del equipo "<<y+1<<endl;
+			cin.getline(esta_aux,300);
+			asignarCadena(equipos->estado,esta_aux);
+			cout<<"ingresa costo del equipo "<<y+1<<endl;
+			cin>>costo_aux;
+			equipos->costo=costo_aux;
+			cout<<"ingresa semestre minimo para el equipo "<<y+1<<endl;
+			cin>>sme_aux;
+			equipos->semestre=sme_aux;
+			cout<<"ingresa descripcion del equipo "<<y+1<<endl;
+			cin.ignore();
+			cin.getline(des_aux,300);
+			asignarCadena(equipos->desck,des_aux);
+			equipos++;
+		}
+		return dan;
 	}
 	else if(des==2) {
 		char kirk[30];
@@ -106,7 +119,7 @@ void TNT(instrumento *&equipo) {
 		ifstream togore(kirk);
 		if(!togore) {
 			cout<<"error:archivo no existe "<<endl;
-			return ;
+			return 0;
 		}
 		else {
 			while(togore.getline(linea,300)) {
@@ -169,20 +182,23 @@ void TNT(instrumento *&equipo) {
 			}
 
 		}
-	togore.close();}
+		cout<<"archivo cerrado con exito"<<endl;
+		togore.close();
+		return dan;
+	}
 }
-void TVT(usuario *&estudiantes) {
+int TVT(usuario *&estudiantes) {
 	int cod_aux;
 	char nom_aux[300];
 	char pog_aux[300];
 	int sme_aux;
 	int dan=0;
 	int des;
-	cout<<"-----------------"<<endl;
-	cout<<"|ingresar equipo|"<<endl;
-	cout<<"|manual======[1]|"<<endl;
-	cout<<"|archivo=====[2]|"<<endl;
-	cout<<"-----------------"<<endl;
+	cout<<"-------------------"<<endl;
+	cout<<"|ingresar usuarios|"<<endl;
+	cout<<"|manual========[1]|"<<endl;
+	cout<<"|archivo=======[2]|"<<endl;
+	cout<<"-------------------"<<endl;
 	cin>>des;
 	if(des==1) {
 		cout<<"ingrese la cantidad de equipos que va a ingresar"<<endl;
@@ -214,6 +230,7 @@ void TVT(usuario *&estudiantes) {
 			usuarios->semes=sme_aux;
 			usuarios++;
 		}
+		return dan;
 	}
 	else if(des==2) {
 		char kirk[30];
@@ -224,7 +241,7 @@ void TVT(usuario *&estudiantes) {
 		ifstream togore(kirk);
 		if(!togore) {
 			cout<<"error:archivo no existe "<<endl;
-			return ;
+			return 0;
 		}
 		else {
 			while(togore.getline(linea,300)) {
@@ -271,13 +288,146 @@ void TVT(usuario *&estudiantes) {
 			}
 
 		}
+		cout<<"archvio cargado con exito"<<endl;
 		togore.close();
+		return dan;
+	}
+}
+void TXT (sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int &des,int eqe,int usu) {
+	int yes;
+	sesion paso;
+	if (estudiantes == nullptr || equipo == nullptr) {
+		cout << "error: Cargue primero los archivos de usuarios y equipos." << endl;
+		return;
+	}
+	ofstream chester("datos.bin", ios::binary |ios::app| ios::out);
+	if (!chester.is_open()) {
+		cout << "Error al abrir el archivo binario." << endl;
+		return;
+	}
+	instrumento *print =equipo;
+	for(int u=0; u<eqe; u++) {
+		cout<<print->codigo<<"=="<<print->nombre<<" | ";
+		if((1+u)%2==0) cout<<endl;
+		print++;
+	}
+	cout<<"ingrese el id del equipo a usar del equipo que quiere usar"<<endl;
+	cin>>yes;
+	print =equipo;
+	for(int g=0; g<eqe; g++) {
+		if(yes==print->codigo) {
+			cout<<"equipo encontrado"<<endl;
+			break;
+		}
+		else if(g==eqe-1) {
+			cout<<"equipo no existe"<<endl;
+			return;
+		}
+		print++;
+	}
+	usuario *search = estudiantes;
+	cout<<"ingrese el id del estudiante"<<endl;
+	cin>>yes;
+	for(int g=0; g<usu; g++) {
+		if(yes==search->codigo) {
+			cout<<"usuario encontrado"<<endl;
+			break;
+		}
+		else if(g==usu-1) {
+			cout<<"usuario no existe"<<endl;
+			return;
+		}
+		search++;
+	}
+	if (search->semes<print->semestre) {
+		cout<<"el estudiante no cuenta con los semestre requeridos"<<endl;
+		return;
+	}
+	if (strcmp(print->estado, " mantenimiento ") == 0 || strcmp(print->estado, " fuera de servicio ") == 0) {
+		cout << "El equipo no se puede usar." << endl;
+		cout << "Estado actual: " << print->estado << endl;
+		return;
+	}
+	cout<<"sesion aprobada"<<endl;
+	paso.codigo=des;
+	paso.codigo_u=search->codigo;
+	paso.codigo_e=print->codigo;
+	cout<<"ingrese la fecha de la sesion"<<endl;
+	cin.ignore();
+	cin.getline(paso.fecha,11);
+	cout<<"ingrese el tiempo de uso (en horas)"<<endl;
+	cin>>paso.duracion_r;
+	paso.abierto=true;
+	agregarSesion(sesiones,des,paso);
+	chester.write(reinterpret_cast<const char*>(&paso), sizeof(sesion));
+
+	chester.close();
+	cout << "Sesion registrada exitosamente en datos.bin" << endl;
+
+}
+void TFT(sesion *&sesiones,usuario *&estudiantes,instrumento *&equipo,int des) {
+	int hora;
+	int moon;
+	usuario *wake=estudiantes;
+	instrumento *golden=equipo;
+	sesion *full=sesiones;
+	if(sesiones = nullptr) {
+		cout<<"no existen sesiones registradas"<<endl;
+	}
+	cout<<"ingresa numero de la sesion a cerrar: "<<endl;
+	cin>>moon;
+	for(int y=0; y<des; y++) {
+		if(moon==full->codigo) {
+			cout<<"sesion encontrada"<<endl;
+			break;
+		}
+		else if(y==des-1) {
+			cout<<"la sesion no existe"<<endl;
+			return;
+		}
+	}
+	if (full->abierto==false) {
+		cout<<"la sesion ya fue cerrada"<<endl;
+		return;
+	}
+		for(int g=0; g<eqe; g++) {
+		if(full->codigo_e==golden->codigo) {
+			break;
+		}
+		else if(g==eqe-1) {
+			return;
+		}
+		full++;
+		golden++;
+	}
+	cout<<"ingrese el timepo final de la sesion"<<endl;
+	cin>>hora;
+	if(full->duracion_r<hora) {
+		cout>>"se le sera aplicada una sancion por ecceso de tiempo"<<endl;
+		for(int g=0; g<usu; g++) {
+			if(full->codigo_u==wake->codigo) {
+				break;
+			}
+			else if(g==usu-1) {
+				return;
+			}
+			full++;
+			wake++;
+		}
+		int spike = hora-full->duracion_r;
+		int pena=(golden->costo*0.03)*spike;
+		cout<<"tu penalizacion sera de "<<pena<<endl;
+		wake->pena_a=pena;
+		
 	}
 }
 
 
 int main() {
 	int D4C;
+	int eqe;
+	int usu;
+	int marca=0;
 	instrumento *equipos=NULL;
 	usuario *estudiantes=NULL;
 	sesion *sesiones=NULL;
@@ -300,9 +450,20 @@ int main() {
 				break;
 			}
 		}
-		TNT(equipos);
-        TVT(estudiantes);
-
+		switch (D4C) {
+		case 1:
+			eqe=TNT(equipos);
+			break;
+		case 2:
+			usu=TVT(estudiantes);
+			break;
+		case 4:
+			TXT(sesiones,estudiantes,equipos,marca,eqe,usu);
+			break;
+		case 5:
+			TFT(sesiones,marca);
+			break;
+		}
 
 	} while(D4C!=8);
 
