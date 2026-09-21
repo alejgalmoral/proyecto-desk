@@ -308,21 +308,21 @@ void TVT(usuario *&estudiantes, int &cant_actual) { ///Función de carga de usua
 			cin >> sme_aux;
 			temp.semes = sme_aux;
 
-			agregarUsuario(estudiantes, cant_actual, temp);
+			agregarUsuario(estudiantes, cant_actual, temp);///Se llama a la función para agregar el nuevo usuario a la lista enlazada
 		}
-	} else if (des == 2) {
+	} else if (des == 2) { ///Ingresado mediante archivo
 		char kirk[30];
 		char linea[300];
 		cout << "escribe el nombre de el archivo" << endl;
 		cin.ignore();
 		cin.getline(kirk, 30);
 		ifstream togore(kirk);
-		if (!togore) {
+		if (!togore) { ///Mensaje en caso de error de apertura del archivo
 			cout << "error:archivo no existe " << endl;
 			return;
 		}
 
-		int opcion = 0;
+		int opcion = 0; ///Contador con el cual se guardará secuencialmente la información de la linea del archivo, en base al valor de Opción
 		while (togore.getline(linea, 300)) {
 			char* token = strtok(linea, "*");
 			opcion = 0;
@@ -330,13 +330,13 @@ void TVT(usuario *&estudiantes, int &cant_actual) { ///Función de carga de usua
 				switch (opcion) {
 				case 0: cod_aux = atoi(token); break;
 				case 1: strcpy(nom_aux, token); break;
-				case 2: strcpy(pog_aux, token); break;
+				case 2: strcpy(pog_aux, token); break; ///...Ejemplo: Cuando opción=2 guardará el programa del usuario
 				case 3: sme_aux = atoi(token); break;
 				}
 				token = strtok(NULL, "*");
 				opcion++;
 			}
-			if (opcion < 4 || sme_aux == 0 || cod_aux == 0) {
+			if (opcion < 4 || sme_aux == 0 || cod_aux == 0) { ///Condicional que da mensaje de error en caso de que un usuario (una linea) tenga información incompleta
 				cout << "error: linea del archivo corrupta" << endl;
 			} else {
 				usuario temp; // VARIABLE TEMPORAL
@@ -345,11 +345,11 @@ void TVT(usuario *&estudiantes, int &cant_actual) { ///Función de carga de usua
 				asignarCadena(temp.programa, pog_aux);
 				temp.semes = sme_aux;
 
-				agregarUsuario(estudiantes, cant_actual, temp);
+				agregarUsuario(estudiantes, cant_actual, temp);///Se llama a la función para agregar el nuevo usuario a la lista enlazada
 			}
 		}
 		cout << "archivo cargado con exito" << endl;
-		togore.close();
+		togore.close(); ///Cierre del archivo
 	}
 }
 
