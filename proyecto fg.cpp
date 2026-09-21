@@ -353,16 +353,16 @@ void TVT(usuario *&estudiantes, int &cant_actual) { ///Función de carga de usua
 	}
 }
 
-void TXT (sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int &des, int eqe, int usu) {
+void TXT (sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int &des, int eqe, int usu) { ///Función para programar una sesión
 	int yes;
 	char Prestado[17] = " prestado ";
 	sesion paso;
-	if (estudiantes == nullptr || equipo == nullptr) {
+	if (estudiantes == nullptr || equipo == nullptr) { ///Condicional que comprueba si se ha cargado información previamente al comprobar si los apuntadores están apuntado a algo
 		cout << "error: Cargue primero los archivos de usuarios y equipos." << endl;
 		return;
 	}
-	ofstream chester("datos.bin", ios::binary | ios::app | ios::out);
-	if (!chester.is_open()) {
+	ofstream chester("datos.bin", ios::binary | ios::app | ios::out); ///Apertura para escribir en archivo binario para las sesiones
+	if (!chester.is_open()) { ///Mensaje en caso de error de apertura
 		cout << "Error al abrir el archivo binario." << endl;
 		return;
 	}
@@ -370,43 +370,44 @@ void TXT (sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int &d
 	for (int u = 0; u < eqe; u++) {
 		cout << print->codigo << "==" << print->nombre << " | ";
 		if ((1 + u) % 2 == 0) cout << endl;
-		print++;
+		print++;///Mover apuntador al siguiente equipo
 	}
-	cout << "ingrese el id del equipo a usar del equipo que quiere usar" << endl;
+	cout << "ingrese el id del equipo que quiere usar" << endl;
 	cin >> yes;
 	print = equipo;
-	for (int g = 0; g < eqe; g++) {
+	for (int g = 0; g < eqe; g++) {///Ciclo para recorrer lista de equipos y comparar codigos de todos los equipos con el codigo del equipo solicitado
 		if (yes == print->codigo) {
 			cout << "equipo encontrado" << endl;
 			break;
-		} else if (g == eqe - 1) {
+		} else if (g == eqe - 1) {///Mensaje en caso de recorrer todos los equipos y no hallar coicidencias con el codigo del equipo requerido
 			cout << "equipo no existe" << endl;
 			return;
 		}
-		print++;
+		print++;///Mover apuntador al siguiente equipo
 	}
 	usuario *search = estudiantes;
 	cout << "ingrese el id del estudiante" << endl;
 	cin >> yes;
-	for (int g = 0; g < usu; g++) {
+	for (int g = 0; g < usu; g++) {///Ciclo para recorrer lista de usuarios y comparar codigos de todos los usuarios con el codigo del usuario proporcionado
 		if (yes == search->codigo) {
 			cout << "usuario encontrado" << endl;
 			break;
-		} else if (g == usu - 1) {
+		} else if (g == usu - 1) {///Mensaje en caso de recorrer todos los usuarios y no hallar coincidencias con el codigo del usuario proporcionado
 			cout << "usuario no existe" << endl;
 			return;
 		}
-		search++;
+		search++;///Mover apuntador al siguiente usuario
 	}
-	if (search->semes < print->semestre) {
+	if (search->semes < print->semestre) {///Condicional que comprueba si el estudiante encontrado tiene el semestre requerido para usar el equipo
 		cout << "el estudiante no cuenta con los semestre requeridos" << endl;
 		return;
 	}
-	if (strcmp(print->estado, " mantenimiento ") == 0 || strcmp(print->estado, " fuera de servicio ") == 0) {
+	if (strcmp(print->estado, " mantenimiento ") == 0 || strcmp(print->estado, " fuera de servicio ") == 0) { ///Condicional que comprueba si el equipo está disponible
 		cout << "El equipo no se puede usar." << endl;
 		cout << "Estado actual: " << print->estado << endl;
 		return;
 	}
+	///Se realiza la escritura primero colocando la información en la variable Paso, que es una estructura Sesion y...
 	cout << "sesion aprobada" << endl;
 	paso.codigo = des;
 	paso.codigo_u = search->codigo;
@@ -418,75 +419,75 @@ void TXT (sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int &d
 	cin >> paso.duracion_r;
 	paso.abierto = true;
 	agregarSesion(sesiones, des, paso);
-	chester.write(reinterpret_cast<const char*>(&paso), sizeof(sesion));
-	strcpy(print->estado, Prestado);
-	chester.close();
+	chester.write(reinterpret_cast<const char*>(&paso), sizeof(sesion)); , ///...posteriormente, se escribe toda la variable Paso en el archivo
+	strcpy(print->estado, Prestado); ///Se cambia el estado del equipo a Prestado
+	chester.close(); ///Cierre dle archivo
 	cout << "Sesion registrada exitosamente en datos.bin" << endl;
 }
 
-void TFT(sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int des, int eqe, int usu) {
+void TFT(sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int des, int eqe, int usu) { ///Función para cerrar sesión
 	char Operativo[17]    = " operativa ";
 	char Mantenimiento[17] = " mantenimiento ";
 	char FueraServicio[22] = " fuera de servicio ";
 	int hora;
-	int moon;
+	int moon; ///Codigo de la sesión a cerrar
 	int spamnton;
-	usuario *wake = estudiantes;
-	instrumento *golden = equipo;
-	sesion *full = sesiones;
+	usuario *wake = estudiantes; ///Copia de apuntador a usuarios
+	instrumento *golden = equipo; /// Copia de apuntador a equipos
+	sesion *full = sesiones; ///Copia de apuntador a sesiones
 
-	if (sesiones == nullptr) {
+	if (sesiones == nullptr) { ///Condicional que comprueba si hay sesiones registradas en base a si el apuntador Sesiones apunta a algo
 		cout << "no existen sesiones registradas" << endl;
 		return;
 	}
 	cout << "ingresa numero de la sesion a cerrar: " << endl;
 	cin >> moon;
-	for (int y = 0; y < des; y++) {
+	for (int y = 0; y < des; y++) { ///Ciclo para recorrer lista de Sesiones, comparando los codigos con el codigo proporcionado (moon)
 		if (moon == full->codigo) {
 			cout << "sesion encontrada" << endl;
 			break;
-		} else if (y == des - 1) {
+		} else if (y == des - 1) { ///Mensaje en caso de recorrer todas las sesiones y no hayar coincidencias con el código proporcionado
 			cout << "la sesion no existe" << endl;
 			return;
 		}
-		full++;
+		full++; ///Mover apuntador de Sesiones
 	}
-	if (full->abierto == false) {
+	if (full->abierto == false) { ///Condicional que comprueba si la sesión ya fue cerrada previamente
 		cout << "la sesion ya fue cerrada" << endl;
 		return;
 	}
-	for (int g = 0; g < eqe; g++) {
+	for (int g = 0; g < eqe; g++) { ///Ciclo para recorrer lista de equipos, buscando el equipo empleado en la sesión a partir de su código
 		if (full->codigo_e == golden->codigo) {
 			break;
 		} else if (g == eqe - 1) {
 			return;
 		}
-		golden++;
+		golden++;///Mover apuntador de equipos
 	}
 	for (int g = 0; g < usu; g++) {
-		if (full->codigo_u == wake->codigo) {
+		if (full->codigo_u == wake->codigo) { ///Ciclo para recorrer lista de usuarios, buscando el usuario a cargo de la sesión a partir de su código
 			break;
 		} else if (g == usu - 1) {
 			return;
 		}
 		wake++;
 	}
-	cout << "ingrese el timepo final de la sesion" << endl;
+	cout << "ingrese el tiempo final de la sesion" << endl;
 	cin >> hora;
-	if (full->duracion_r < hora) {
-		cout << "se le sera aplicada una sancion por ecceso de tiempo" << endl;
-		int spike = hora - full->duracion_r;
-		int pena = (golden->costo * 0.03) * spike;
+	if (full->duracion_r < hora) { ///Condicional que comprueba si la duración real fue mayor a la duración estimada de la sesión
+		cout << "se le sera aplicada una sancion por exceso de tiempo" << endl;
+		int spike = hora - full->duracion_r; ///Cálculo del tiempo excedente
+		int pena = (golden->costo * 0.03) * spike; ///Cálculo de la penalización a partir del costo del equipo y el tiempo que se excedio la sesión
 		cout << "tu penalizacion sera de " << pena << endl;
-		wake->pena_a += pena;
+		wake->pena_a += pena;///Se registra el valor de la penalización en el usuario
 	}
-	full->abierto = false;
-	wake->cont_s += 1;
+	full->abierto = false;///Se cierra la sesión
+	wake->cont_s += 1;///Aumenta el contador de sesiones que ha tenido el usuario
 	cout << "el equipo sufrio alguna daño?" << endl;
 	cout << "--------------------------" << endl;
-	cout << "|ninguno==============[1]|" << endl;
+	cout << "|ninguno==============[1]|" << endl; /// Reporte del estado del equipo
 	cout << "|mantenimiento========[2]|" << endl;
-	cout << "|salida de servivio===[3]|" << endl;
+	cout << "|salida de servicio===[3]|" << endl;
 	cout << "--------------------------" << endl;
 	cin >> spamnton;
 	while (true) {
@@ -499,23 +500,23 @@ void TFT(sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int des
 	}
 	switch (spamnton) {
 	case 1:
-		cout << "equipo operativo" << endl;
+		cout << "equipo operativo" << endl; ///Cambiar el estado del equipo a Operativo
 		strcpy(golden->estado, Operativo);
 		break;
 	case 2:
-		cout << "equipo para mantenimiento" << endl;
+		cout << "equipo para mantenimiento" << endl; ///Cambiar el estado del equipo a Mantenimiento
 		strcpy(golden->estado, Mantenimiento);
 		break;
 	case 3:
-		cout << "equipo queda fuera de servicio" << endl;
+		cout << "equipo queda fuera de servicio" << endl; ///Cambiar el estado del equipo a Fuera de servicio
 		strcpy(golden->estado, FueraServicio);
 		break;
 	}
 	cout << "escriba sus observaciones de la sesion" << endl;
 	cin.ignore();
 	cin.getline(full->observacion, 300);
-	fstream deltarune("datos.bin", ios::binary | ios::in | ios::out);
-	if (!deltarune.is_open()) {
+	fstream deltarune("datos.bin", ios::binary | ios::in | ios::out); ///Apertura del archivo binario de sesiones para añadir observaciones de la sesión
+	if (!deltarune.is_open()) { ///Mensaje en caso de error de apertura del archivo
 		cout << "Error al abrir datos.bin para actualizacion." << endl;
 		return;
 	}
@@ -528,10 +529,12 @@ void TFT(sesion *&sesiones, usuario *&estudiantes, instrumento *&equipo, int des
 
 int main() {
 	int D4C;
-	int eqe = 0; // Inicializados en 0
-	int usu = 0;
-	int marca = 0;
+	//Contadores de cantidad inicializados en 0
+	int eqe = 0; ///Cantidad de equipos
+	int usu = 0; ///Cantidad de usuarios
+	int marca = 0; ///Cantidad de sesiones
 
+	///Declaración de apuntadores de cada tipo de estructura
 	instrumento *equipos = NULL;
 	usuario *estudiantes = NULL;
 	sesion *sesiones = NULL;
