@@ -36,23 +36,23 @@ struct sesion {
 	bool abierto;
 };
 
-void asignarCadena(char*& destino, const char* origen) {
+void asignarCadena(char*& destino, const char* origen) { ///Función para copia y declaración dinámica de cadenas de caracteres
 	if (origen == NULL) return;
 	destino = new char[strlen(origen) + 1];
 	strcpy(destino, origen);
 }
 
-void agregarSesion(sesion *&sesiones, int &cant, sesion nueva) {
+void agregarSesion(sesion *&sesiones, int &cant, sesion nueva) { ///Función para agregar una nueva sesión a una lista de estructuras enlazadas de tipo Sesión
 	sesion *nuevo = new sesion[cant + 1];
-	sesion *orig = sesiones;
-	sesion *dest = nuevo;
+	sesion *orig = sesiones; ///Apuntador hacia inicio de lista
+	sesion *dest = nuevo; ///Apuntador hacia el final de la lista
 	for (int i = 0; i < cant; i++) {
-		*dest++ = *orig++;
+		*dest++ = *orig++; ///Ciclo que mueve ambos apuntadores exactamente 1 posición (la cantidad de bytes que ocupa la estructura Sesion) hacia adelante
 	}
-	*dest = nueva;
-	delete[] sesiones;
+	*dest = nueva; ///Hacia donde apunta *dest, se guardará la nueva sesión; o sea, la nueva sesión se guardará al final de la lista
+	delete[] sesiones; 
 	sesiones = nuevo;
-	cant++;
+	cant++; ///Contador de sesiones
 }
 
 void agregarEquipo(instrumento *&equipos, int &cant, instrumento nuevo) {
@@ -114,6 +114,7 @@ void agregarUsuario(usuario *&estudiantes, int &cant, usuario nuevo) {
 	usuario *ptrOrig = estudiantes;
 	usuario *ptrDest = nuevoArreglo;
 
+	///Ciclo para copia de usuarios existentes
 	for (int i = 0; i < cant; i++) {
 		ptrDest->codigo = ptrOrig->codigo;
         
@@ -131,6 +132,7 @@ void agregarUsuario(usuario *&estudiantes, int &cant, usuario nuevo) {
 		ptrDest++;
 	}
 
+	///Copia del nuevo usuario
 	ptrDest->codigo = nuevo.codigo;
 	asignarCadena(ptrDest->nomes, nuevo.nomes);
 	asignarCadena(ptrDest->programa, nuevo.programa);
@@ -146,7 +148,7 @@ void agregarUsuario(usuario *&estudiantes, int &cant, usuario nuevo) {
 	cant++;
 }
 
-void TNT(instrumento *&equipo, int &cant_actual) {
+void TNT(instrumento *&equipo, int &cant_actual) { ///Función de carga de equipos
 	int cod_aux;
 	char nom_aux[300];
 	char lab_aux[300];
@@ -158,6 +160,7 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 	int dan = 0;
 	int des;
 
+	///Menú para que el usuario cargue equipos manualmente o leyendo el archivo donde se guardan los equipos
 	cout << "-----------------" << endl;
 	cout << "|ingresar equipo|" << endl;
 	cout << "|manual======[1]|" << endl;
@@ -165,7 +168,7 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 	cout << "-----------------" << endl;
 	cin >> des;
 
-	if (des == 1) {
+	if (des == 1) { ///Ingresado manual de equipos
 		cout << "ingrese la cantidad de equipos que va a ingresar" << endl;
 		cin >> dan;
 		while (dan <= 0) {
@@ -173,7 +176,7 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 			cin >> dan;
 		}
 
-		for (int y = 0; y < dan; y++) {
+		for (int y = 0; y < dan; y++) { ///Ciclo para solicitar toda la información del equipo
 			instrumento temp; // DECLARACION DE VARIABLE TEMPORAL
 			cout << "ingresa codigo del equipo " << y + 1 << endl;
 			cin >> cod_aux;
@@ -209,27 +212,27 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 			cin.getline(des_aux, 300);
 			asignarCadena(temp.desck, des_aux);
 
-			agregarEquipo(equipo, cant_actual, temp);
+			agregarEquipo(equipo, cant_actual, temp); ///Se llama a la función para agregar el nuevo equipo a la lista enlazada
 		}
-	} else if (des == 2) {
+	} else if (des == 2) { ///Ingreso de equipos mediante archivo
 		char kirk[30];
 		char linea[300];
-		cout << "escribe el nombre de el archivo" << endl;
+		cout << "escribe el nombre de el archivo" << endl; ///Solicitud del nombre del archivo al usuario
 		cin.ignore();
 		cin.getline(kirk, 30);
-		ifstream togore(kirk);
+		ifstream togore(kirk); ///Apertura para leer el archivo
 		if (!togore) {
-			cout << "error:archivo no existe " << endl;
+			cout << "error:archivo no existe " << endl; ///Mensaje en caso de error de apertura de archivo
 			return;
 		}
 
-		int opcion = 0;
+		int opcion = 0; ///Declaración de contador que permitirá guardar la información en los espacios de la estructura de Instrumento en base al valor de Opción...
 		while (togore.getline(linea, 300)) {
 			char* token = strtok(linea, "*");
 			opcion = 0;
 			while (token != NULL) {
 				switch (opcion) {
-				case 0: cod_aux = atoi(token); break;
+				case 0: cod_aux = atoi(token); break; ///...(Ejemplo: Opción=0 guardará código)
 				case 1: strcpy(nom_aux, token); break;
 				case 2: strcpy(lab_aux, token); break;
 				case 3: strcpy(tipo_aux, token); break;
@@ -239,9 +242,9 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 				case 7: strcpy(des_aux, token); break;
 				}
 				token = strtok(NULL, "*");
-				opcion++;
+				opcion++;///Tras guardar un dato tras tokenizar, aumentar el valor de Opción
 			}
-			if (opcion < 8 || sme_aux == 0 || costo_aux == 0 || cod_aux == 0) {
+			if (opcion < 8 || sme_aux == 0 || costo_aux == 0 || cod_aux == 0) { ///Condicional para mensaje de error en caso de información de equipo incompleta
 				cout << "error: linea del archivo corrupta" << endl;
 			} else {
 				instrumento temp; // VARIABLE TEMPORAL PARA CADA LINEA DEL ARCHIVO
@@ -254,15 +257,15 @@ void TNT(instrumento *&equipo, int &cant_actual) {
 				temp.semestre = sme_aux;
 				asignarCadena(temp.desck, des_aux);
 
-				agregarEquipo(equipo, cant_actual, temp);
+				agregarEquipo(equipo, cant_actual, temp);///Se llama a la función para agregar el nuevo equipo a la lista enlazada
 			}
 		}
 		cout << "archivo cerrado con exito" << endl;
-		togore.close();
+		togore.close(); ///Cierre de archivo
 	}
 }
 
-void TVT(usuario *&estudiantes, int &cant_actual) {
+void TVT(usuario *&estudiantes, int &cant_actual) { ///Función de carga de usuarios
 	int cod_aux;
 	char nom_aux[300];
 	char pog_aux[300];
@@ -270,14 +273,15 @@ void TVT(usuario *&estudiantes, int &cant_actual) {
 	int dan = 0;
 	int des;
 
+	///Menú para que el usuario cargue usuarios manualmente o leyendo el archivo donde se guardan los usuarios
 	cout << "-------------------" << endl;
-	cout << "|ingresar usuarios|" << endl;
+	cout << "|ingresar usuarios|" << endl; 
 	cout << "|manual========[1]|" << endl;
 	cout << "|archivo=======[2]|" << endl;
 	cout << "-------------------" << endl;
 	cin >> des;
 
-	if (des == 1) {
+	if (des == 1) { ///Ingresado manual de usuarios
 		cout << "ingrese la cantidad de usuarios que va a ingresar" << endl;
 		cin >> dan;
 		while (dan <= 0) {
@@ -285,7 +289,7 @@ void TVT(usuario *&estudiantes, int &cant_actual) {
 			cin >> dan;
 		}
 
-		for (int y = 0; y < dan; y++) {
+		for (int y = 0; y < dan; y++) { ///Ciclo para realizar llenado de la información de los usuarios a ingresar manualmente
 			usuario temp; // VARIABLE TEMPORAL
 			cout << "ingresa codigo del estudiante " << y + 1 << endl;
 			cin >> cod_aux;
